@@ -16,6 +16,13 @@ let getTopDoctorHome = () => {
                     exclude: ['password']
                 },
                 include: [
+                    {
+                        model: db.Doctor_Info, attributes: ['specialtyId'],
+
+                        include: [
+                            { model: db.Specialty, as: 'specialtyData', attributes: ['name'] }
+                        ],
+                    },
                     { model: db.Allcode, as: 'positionData', attributes: ['valueEn', 'valueVi'] },
                     { model: db.Allcode, as: 'genderData', attributes: ['valueEn', 'valueVi'] }
                 ],
@@ -189,11 +196,13 @@ let getDetailDoctorById = (inputId) => {
 let bulkCreateSchedule = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
+            console.log('check', data)
             if (!data.arrSchedule || !data.doctorId || !data.formatedDate) {
                 resolve({
                     errCode: 1,
                     errMessage: 'Missing required param'
                 })
+
             } else {
                 let schedule = data.arrSchedule;
                 if (schedule && schedule.length > 0) {
