@@ -2,6 +2,7 @@ import db from "../models/index";
 require('dotenv').config();
 import emailService from './emailService';
 import { v4 as uuidv4 } from 'uuid';
+import e from "cors";
 
 let buildUrlEmail = (doctorId, token) => {
     let result = `${process.env.URL_REACT}/verify-booking?token=${token}&doctorId=${doctorId}`
@@ -52,9 +53,22 @@ let postBookAppointment = (data) => {
 
                 //create booking
                 if (user && user[0]) {
-                    await db.Booking.findOrCreate({
-                        where: { patientId: user[0].id },
-                        defaults: {
+
+                    let info = await db.Booking.findOne({
+                        where: { patientId: user[0].id, statusId: 'S1' },
+                        raw: false
+                    })
+                    let info2 = await db.Booking.findOne({
+                        where: { patientId: user[0].id, statusId: 'S2' },
+                        raw: false
+                    })
+                    if (info || info2) {
+                        resolve({
+                            errCode: 2,
+                            errMessage: 'Đặt lịch thất bại, bạn đang có lịch hẹn chưa xác nhận hoặc chưa khám xong!'
+                        })
+                    } else {
+                        await db.Booking.create({
                             statusId: 'S1',
                             doctorId: data.doctorId,
                             patientId: user[0].id,
@@ -62,8 +76,9 @@ let postBookAppointment = (data) => {
                             timeType: data.timeType,
                             reason: data.reason,
                             token: token
-                        }
-                    })
+                        })
+                    }
+
                 }
 
                 resolve({
