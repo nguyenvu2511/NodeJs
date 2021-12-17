@@ -27,16 +27,7 @@ let postBookAppointment = (data) => {
                 })
             } else {
 
-                let token = uuidv4();
 
-                await emailService.sendSimpleEmail({
-                    reciverEmail: data.email,
-                    patientName: data.fullName,
-                    time: data.timeString,
-                    doctorName: data.doctorName,
-                    language: data.language,
-                    redirectLink: buildUrlEmail(data.doctorId, token)
-                });
 
                 //upsert patient
                 let user = await db.User.findOrCreate({
@@ -68,6 +59,16 @@ let postBookAppointment = (data) => {
                             errMessage: 'Đặt lịch thất bại, bạn đang có lịch hẹn chưa xác nhận hoặc chưa khám xong!'
                         })
                     } else {
+                        let token = uuidv4();
+
+                        await emailService.sendSimpleEmail({
+                            reciverEmail: data.email,
+                            patientName: data.fullName,
+                            time: data.timeString,
+                            doctorName: data.doctorName,
+                            language: data.language,
+                            redirectLink: buildUrlEmail(data.doctorId, token)
+                        });
                         await db.Booking.create({
                             statusId: 'S1',
                             doctorId: data.doctorId,
@@ -77,6 +78,7 @@ let postBookAppointment = (data) => {
                             reason: data.reason,
                             token: token
                         })
+
                     }
 
                 }
