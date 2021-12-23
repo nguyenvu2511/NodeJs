@@ -76,6 +76,7 @@ let getDetailSpecialtyById = (inputId, location) => {
                             where: { specialtyId: inputId },
                             attributes: ['doctorId', 'provinceId'],
                         })
+
                     } else {
                         //find by location
                         doctorSpecialty = await db.Doctor_Info.findAll({
@@ -88,6 +89,7 @@ let getDetailSpecialtyById = (inputId, location) => {
                     }
 
                     data.doctorSpecialty = doctorSpecialty;
+
 
                 } else data = {}
                 resolve({

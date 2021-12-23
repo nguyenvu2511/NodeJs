@@ -563,6 +563,44 @@ let getListPatientDone = (doctorId) => {
         }
     })
 }
+
+let chooseDoctor = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            console.log('data', data)
+            if (!data.doctorId) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing required param'
+                })
+            } else {
+                let info = await db.Booking.findOne({
+                    where: {
+                        id: data.id
+                    },
+                    raw: false,
+                })
+                if (info) {
+                    info.doctorId = data.doctorId;
+
+                    await info.save();
+                    await emailService.sendChooseDoctorBooking(data);
+                    resolve({
+                        errCode: 0,
+                        message: 'Chọn bác sỹ cho bênh nhân thành công!'
+                    })
+                } else {
+                    resolve({
+                        errCode: 1,
+                        errMessage: 'Schedule is not found'
+                    });
+                }
+            }
+        } catch (e) {
+            reject(e);
+        }
+    })
+}
 module.exports = {
     getTopDoctorHome: getTopDoctorHome,
     getAllDoctors: getAllDoctors,
@@ -576,5 +614,6 @@ module.exports = {
     sendRemedy: sendRemedy,
     sendCancelBooking: sendCancelBooking,
     deleteScheduleByDate: deleteScheduleByDate,
-    getListPatientDone: getListPatientDone
+    getListPatientDone: getListPatientDone,
+    chooseDoctor: chooseDoctor
 }
