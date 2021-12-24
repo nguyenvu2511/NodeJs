@@ -209,6 +209,7 @@ let getBodyDoctorBooking = (dataSend) => {
         <div><b>Thời gian: ${dataSend.time}</b></div>
         <div><b>Bác sĩ: ${dataSend.doctorName}</b></div>
         <div><b>Chuyên khoa: ${dataSend.specialty}</b></div>
+        
         <p> GoodCare rất hoan nghênh nếu được tiếp tục phục vụ bạn ở những lần tiếp theo !</p>
         <p> Chúc bạn thật nhiều sức khỏe và thành công trong cuộc sống. </p>
         <p> GoodCare Xin chân thành cảm ơn ! </p>
